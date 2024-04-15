@@ -1,3 +1,10 @@
+#ifndef MESH_H
+#define MESH_H
+
+#define GLM_FORCE_RADIANS
+
+#include "ShaderProgram.h"
+
 #include <vector>
 #include <set>
 #include <glm/glm.hpp>
@@ -7,22 +14,24 @@
 #include <glm/geometric.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "ShaderProgram.h";
+
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
-using namespace glm;
 using namespace std;
+using namespace glm;
 
-#pragma once
 class Mesh
 {
 public:
+	/**mesh data: loaded from the file as arrays**/
 	uint vert_num, tri_num;
+
 	vec3* vertices;
 	uvec3* triangles;
-	vec3* faceNormals;
-	vec3* vertexNormals;
+	vec3* fnormals;  // normals of triangles, size = # of triangles
+	vec3* vnormals;  // normal of vertices, computed by averaging the adajecent traingle normals; size = # of vertices
 
 	GLuint vao, vbo, nbo, ibo;
 	ShaderProgram shaderProg;
@@ -30,14 +39,24 @@ public:
 	ShaderClass fShader;
 
 	mat4 modelMat;
+
+	float normal_offset = 0.0f;
+
+
 public:
 	Mesh();
 	~Mesh();
 
-	void Create(const char* filename, const char* v_shader_file, const char* f_shader_file);
+	/* Load the mesh from an '.obj' file. All faces need to be triangles.
+	   Attributes like edge lengths and curvatures should be computed when simplifying the mesh.
+	*/
+	void Create(const char* filename, const  char* v_shader_file, const char* f_shader_file);
+
 	void Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time);
+
 private:
-	void computeNormals();
-	void prepareVBOAndShaders(const char* v_shader_file, const char* f_shader_file);
+	void computeNormals(); // compute both face and vertex normals
+	void prepareVBOandShaders(const char* v_shader_file, const char* f_shader_file);
 };
 
+#endif

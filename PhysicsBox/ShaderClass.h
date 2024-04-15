@@ -1,5 +1,10 @@
+#ifndef SHADERCLASS_H
+#define SHADERCLASS_H
+
 #include <GL/glew.h>
-#include <string>;
+#include <string>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -18,3 +23,4 @@ private:
 	void printShaderInfoLog(unsigned int shader_id);
 };
 
+#endif
