@@ -76,7 +76,7 @@ void motion(int x, int y)
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-	glutSetOption(GLUT_MULTISAMPLE, 4);
+	glutSetOption(GLUT_MULTISAMPLE, 8);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB | GLUT_MULTISAMPLE);
 	glutInitWindowSize(g_winWidth, g_winHeight);
 	glutInitWindowPosition(0, 0);

@@ -158,7 +158,6 @@ void Camera::DrawGrid()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadMatrixf(value_ptr(viewMat));
-
     glBegin(GL_LINES);
     for (int i = 0; i < size + 1; i++)
     {
