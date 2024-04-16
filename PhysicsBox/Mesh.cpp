@@ -186,22 +186,22 @@ void Mesh::Create(const char* filename, const char* v_shader_file, const char* f
 
 void Mesh::Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time)
 {
-
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
 	if (vert_num <= 0 && tri_num <= 0)
+	{
+		cout << "Object has no defined geometry. Check if source file exists.\n";
 		return;
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT, GL_FILL);
 
-
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-
 
 	glUseProgram(shaderProg.id);
 	shaderProg.SetMatrix4fv("modelMat", 1, value_ptr(modelMat));
@@ -210,9 +210,9 @@ void Mesh::Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time)
 	shaderProg.SetFloat3V("lightPos", 1, value_ptr(lightPos));
 	shaderProg.SetFloat("time", time);
 
-	//cout << glm::to_string(modelMat) << endl;
-	//cout << glm::to_string(viewMat) << endl;
-	//cout << glm::to_string(projMat) << endl;
+	/*cout << glm::to_string(modelMat) << endl;
+	cout << glm::to_string(viewMat) << endl;
+	cout << glm::to_string(projMat) << endl;*/
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glDrawElements(GL_TRIANGLES, tri_num * 3, GL_UNSIGNED_INT, NULL);
