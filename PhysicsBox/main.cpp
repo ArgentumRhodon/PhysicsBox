@@ -15,7 +15,7 @@ int g_winHeight = 800;
 
 char v_shader_file[] = ".\\shaders\\perFrag_lambert.vert";
 char f_shader_file[] = ".\\shaders\\perFrag_lambert.frag";
-const char meshFile[128] = "./meshes/sphere.obj";
+const char meshFile[128] = "./meshes/sphere_det.obj";
 
 Camera g_cam;
 Mesh sphere;
