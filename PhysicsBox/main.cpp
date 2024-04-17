@@ -13,9 +13,9 @@ using namespace std;
 int g_winWidth = 1440;
 int g_winHeight = 800;
 
-char v_shader_file[] = ".\\shaders\\perFrag_lambert.vert";
-char f_shader_file[] = ".\\shaders\\perFrag_lambert.frag";
-const char meshFile[128] = "./meshes/sphere_det.obj";
+char v_shader_file[] = ".\\shaders\\perVert_lambert.vert";
+char f_shader_file[] = ".\\shaders\\perVert_lambert.frag";
+const char meshFile[128] = "./meshes/sphere.obj";
 
 Camera g_cam;
 Mesh sphere;

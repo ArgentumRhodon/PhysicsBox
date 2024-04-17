@@ -127,6 +127,8 @@ void Mesh::Create(const char* filename, const char* v_shader_file, const char* f
 	char c;
 	vec3 pos;
 	int index[3];
+	int prevI4;
+	int i4 = NULL;
 	int vid = 0;
 
 	std::string line;
@@ -153,8 +155,17 @@ void Mesh::Create(const char* filename, const char* v_shader_file, const char* f
 			iss >> index[0];
 			iss >> index[1];
 			iss >> index[2];
+
+			prevI4 = i4;
+			iss >> i4;
+
+
 			// NOTE: index in obj files starts from 1
 			ori_triangles.push_back(uvec3(index[0] - 1, index[1] - 1, index[2] - 1));
+			if (prevI4 != i4 && i4 != NULL)
+			{
+				ori_triangles.push_back(uvec3(index[0] - 1, index[2] - 1, i4-1));
+			}
 			break;
 		}
 		default:
