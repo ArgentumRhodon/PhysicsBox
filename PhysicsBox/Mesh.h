@@ -52,7 +52,7 @@ public:
 	*/
 	void Create(const char* filename, const  char* v_shader_file, const char* f_shader_file);
 
-	void Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time);
+	void Draw(mat4 viewMat, mat4 projMat, vec3 lightPos);
 
 private:
 	void computeNormals(); // compute both face and vertex normals

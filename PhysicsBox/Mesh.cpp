@@ -195,7 +195,7 @@ void Mesh::Create(const char* filename, const char* v_shader_file, const char* f
 	prepareVBOandShaders(v_shader_file, f_shader_file);
 }
 
-void Mesh::Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time)
+void Mesh::Draw(mat4 viewMat, mat4 projMat, vec3 lightPos)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -219,7 +219,6 @@ void Mesh::Draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time)
 	shaderProg.SetMatrix4fv("viewMat", 1, value_ptr(viewMat));
 	shaderProg.SetMatrix4fv("projMat", 1, value_ptr(projMat));
 	shaderProg.SetFloat3V("lightPos", 1, value_ptr(lightPos));
-	shaderProg.SetFloat("time", time);
 
 	/*cout << glm::to_string(modelMat) << endl;
 	cout << glm::to_string(viewMat) << endl;

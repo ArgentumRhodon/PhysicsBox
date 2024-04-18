@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "Mesh.h"
+#include "PhysicsWorld.h"
 
 using namespace std;
 
@@ -17,17 +18,19 @@ char v_shader_file[] = ".\\shaders\\perVert_lambert.vert";
 char f_shader_file[] = ".\\shaders\\perVert_lambert.frag";
 const char meshFile[128] = "./meshes/sphere.obj";
 
+PhysicsWorld* physicsWorld;
 Camera g_cam;
-Mesh sphere;
+Mesh* sphere;
 vec3 g_lightPos = vec3(500.0f, 500.0f, 500.0f);
-float g_time = 0.0f;
 
 unsigned char g_keyStates[256];
 
 void init()
 {
 	g_cam.Set(38.0f, 13.0f, 4.0f, 0.0f, 0.0f, 0.0f, g_winWidth, g_winHeight, 45.0f, 0.01f, 10000.0f);
-	sphere.Create(meshFile, v_shader_file, f_shader_file);
+	sphere = new Mesh();
+	sphere->Create(meshFile, v_shader_file, f_shader_file);
+	physicsWorld = new PhysicsWorld(10, sphere);
 }
 
 void initialGL()
@@ -50,15 +53,16 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	g_cam.DrawGrid();
-	g_time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 
-	sphere.Draw(g_cam.viewMat, g_cam.projMat, g_lightPos, g_time);
+	//sphere->Draw(g_cam.viewMat, g_cam.projMat, g_lightPos);
+	physicsWorld->Draw(g_cam, g_lightPos);
 
 	glutSwapBuffers();
 }
 
 void idle()
 {
+	physicsWorld->Update();
 	glutPostRedisplay();
 }
 
