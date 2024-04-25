@@ -1,15 +1,29 @@
 #include "PhysicsWorld.h"
 
+float PhysicsWorld::randomf(float min, float max)
+{
+	if (max < min) return 0.0f;
+	float n = ((float)rand()) / ((float)RAND_MAX);
+	float range = max - min;
+	return n * range + min;
+}
+
 PhysicsWorld::PhysicsWorld(unsigned int numObjects, Mesh* mesh)
 	: deltaTime(0), timeSinceStart(0), lastTimeSinceStart(0)
 {
 	RigidBody* rb;
 
-	for (int i = 0; i < numObjects; i++)
+	for (unsigned int i = 0; i < numObjects; i++)
 	{
-		vec3 pos = vec3(0, i, 0);
-		rb = new RigidBody(pos, mesh);
-		objects.push_back(rb);
+		for (unsigned int j = 0; j < numObjects; j++) {
+			for (unsigned int k = 0; k < numObjects; k++)
+			{
+				vec3 pos = vec3(2*i, 2*j, 2*k);
+				rb = new RigidBody(pos, mesh);
+				rb->useGravity = false;
+				objects.push_back(rb);
+			}
+		}
 	}
 }
 
@@ -26,6 +40,7 @@ void PhysicsWorld::Update()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		objects[i]->TranslateResolve(deltaTime);
+		objects[i]->AddForce(vec3(randomf(-0.5, 0.5), randomf(-0.5, 0.5), randomf(-0.5, 0.5)));
 	}
 }
 

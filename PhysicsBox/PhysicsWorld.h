@@ -20,6 +20,7 @@ private:
 	float lastTimeSinceStart;
 	float deltaTime;
 	vector<RigidBody*> objects;
+	float randomf(float min, float max);
 public:
 	PhysicsWorld(unsigned int numObjects, Mesh* mesh);
 	~PhysicsWorld();
