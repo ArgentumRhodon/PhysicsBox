@@ -9,7 +9,7 @@ class Octant
 
 	unsigned int id = 0; // Id
 	unsigned int level = 0; // Current level
-	unsigned int children = 0; // (0 || 8)
+	unsigned int numChildren = 0; // (0 || 8)
 
 	float size = 0.0f;
 
@@ -42,12 +42,40 @@ public:
 	vec3 GetMax(void);
 
 	// Checks if rb is colliding with node
-	bool isColliding(unsigned int rbIndex);
+	bool IsColliding(unsigned int rbIndex);
 
 	void ClearEntityList(void);
 
 	void Subdivide(void);
 
 	Octant* GetChild(unsigned int childIndex);
+
+	Octant* GetParent(void);
+
+	bool IsLeaf(void);
+
+	bool ContainsAtLeast(unsigned int numEntities);
+
+	void KillBranches(void);
+
+	void ConstructTree(unsigned int maxLevel = 3);
+
+	void AssignIDToEntity(void);
+
+	unsigned int GetOctantCount(void);
+
+private:
+	Octant(vec3 center, float size);
+
+	// Big Three
+	//Octant(Octant const& other);
+
+	//Octant& operator=(Octant const& other);
+
+	void Release(void);
+
+	void Init(void);
+
+	void ConstructList(void);
 };
 

@@ -1,7 +1,7 @@
 #include "RigidBody.h"
 
 RigidBody::RigidBody(vec3 position, Mesh* mesh, float mass, float drag, float radius)
-	: position(position), mesh(mesh), mass(mass), drag(drag), radius(radius)
+	: position(position), mesh(mesh), mass(mass), drag(drag), radius(radius), octantID(0)
 {
 }
 
@@ -29,4 +29,14 @@ void RigidBody::TranslateResolve(float deltaTime)
 void RigidBody::AddForce(vec3 force)
 {
 	velocity += force / mass;
+}
+
+vec3 RigidBody::GetMinPos()
+{
+	return position - vec3(radius);
+}
+
+vec3 RigidBody::GetMaxPos()
+{
+	return position + vec3(radius);
 }

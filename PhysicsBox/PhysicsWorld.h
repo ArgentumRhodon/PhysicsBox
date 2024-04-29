@@ -19,9 +19,9 @@ private:
 	float timeSinceStart;
 	float lastTimeSinceStart;
 	float deltaTime;
-	vector<RigidBody*> objects;
 	float randomf(float min, float max);
 public:
+	vector<RigidBody*> objects;
 	PhysicsWorld(unsigned int numObjects, Mesh* mesh);
 	~PhysicsWorld();
 	void Update();

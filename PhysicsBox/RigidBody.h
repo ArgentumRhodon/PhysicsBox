@@ -14,6 +14,7 @@ public:
 	Mesh* mesh;
 	vec3 position;
 	float radius;
+	unsigned int octantID;
 
 private:
 	vec3 velocity;
@@ -24,5 +25,7 @@ public:
 	RigidBody(vec3 position, Mesh* mesh, float mass = 1.0f, float drag = 0.0f, float radius = 1.0f);
 	void TranslateResolve(float deltaTime);
 	void AddForce(vec3 torque);
+	vec3 GetMinPos();
+	vec3 GetMaxPos();
 };
 
