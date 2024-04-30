@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsWorld.h"
+#include <glm/glm.hpp>
 
 class Octant
 {

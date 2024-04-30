@@ -34,34 +34,32 @@ void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int
 	min = firstObject->GetMinPos();
 	max = firstObject->GetMaxPos();
 
-	/*for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
+	for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
 	{
 		vec3 entityMin = physicsWorld->objects[i]->GetMinPos();
 		vec3 entityMax = physicsWorld->objects[i]->GetMaxPos();
 
-		if (max.x < entityMax.x) max.x = entityMax.x;
+		min = glm::min(min, entityMin);
+		max = glm::max(max, entityMax);
+
+		/*if (max.x < entityMax.x) max.x = entityMax.x;
 		if (min.x > entityMin.x) min.x = entityMin.x;
 
 		if (max.y < entityMax.y) max.y = entityMax.y;
 		if (min.y > entityMin.y) min.y = entityMin.y;
 
 		if (max.z < entityMax.z) max.z = entityMax.z;
-		if (min.z > entityMin.z) min.z = entityMin.z;
-	}*/
-
-	float longestSideLength = 0;
-	for (int i = 0; i < 3; i++)
-	{
-		if (abs(min[i]) > longestSideLength) longestSideLength = abs(min[i]);
-		if (abs(max[i]) > longestSideLength) longestSideLength = abs(max[i]);
+		if (min.z > entityMin.z) min.z = entityMin.z;*/
 	}
 
 	center = (max + min) / 2.0f;
 
-	min = center - vec3(longestSideLength / 2);
-	max = center + vec3(longestSideLength / 2);
+	vec3 extent = max - min;
+	size = glm::max(glm::max(extent.x, extent.y), extent.z);
 
-	size = longestSideLength;
+	vec3 halfSize = vec3(size) / 2.0f;
+	min = center - halfSize;
+	max = center + halfSize;
 
 	octantCount++;
 	ConstructTree(maxLevel);
@@ -289,13 +287,13 @@ void Octant::DisplayLeaves(Camera g_cam)
 	glPushMatrix();
 	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, max)));
 	glColor3f(1.0f, 0.0f, 1.0f);
-	glutWireSphere(1, 10, 10);
+	glutWireSphere(0.05, 10, 10);
 	glPopMatrix();
 
 	glPushMatrix();
 	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, min)));
 	glColor3f(1.0f, 0.0f, 1.0f);
-	glutWireSphere(1, 10, 10);
+	glutWireSphere(0.05, 10, 10);
 	glPopMatrix();
 }
 
