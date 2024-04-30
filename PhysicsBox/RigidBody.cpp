@@ -59,4 +59,23 @@ void RigidBody::DisplayBoundingSphere(Camera g_cam)
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glutWireSphere(radius, 10, 10);
 	glPopMatrix();
+
+	// Debug
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, GetMinPos())));
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glutWireSphere(0.05, 5, 5);
+	glPopMatrix();
+
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, GetMaxPos())));
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glutWireSphere(0.05, 5, 5);
+	glPopMatrix();
+
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, position)));
+	glColor3f(1.0f, 0.0f, 1.0f);
+	glutWireCube(radius * 2);
+	glPopMatrix();
 }

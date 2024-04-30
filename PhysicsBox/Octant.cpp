@@ -61,7 +61,7 @@ void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int
 	min = center - vec3(longestSideLength / 2);
 	max = center + vec3(longestSideLength / 2);
 
-	size = (max - min).x;
+	size = longestSideLength;
 
 	octantCount++;
 	ConstructTree(maxLevel);
@@ -283,6 +283,19 @@ void Octant::DisplayLeaves(Camera g_cam)
 	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, center)));
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glutWireCube(size);
+	glPopMatrix();
+
+	// Debug
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, max)));
+	glColor3f(1.0f, 0.0f, 1.0f);
+	glutWireSphere(1, 10, 10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, min)));
+	glColor3f(1.0f, 0.0f, 1.0f);
+	glutWireSphere(1, 10, 10);
 	glPopMatrix();
 }
 
