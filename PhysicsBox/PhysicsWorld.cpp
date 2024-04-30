@@ -18,7 +18,7 @@ PhysicsWorld::PhysicsWorld(unsigned int numObjects, Mesh* mesh)
 		for (unsigned int j = 0; j < numObjects; j++) {
 			for (unsigned int k = 0; k < numObjects; k++)
 			{
-				vec3 pos = vec3(2*i, 2*j, 2*k);
+				vec3 pos = vec3(4*i, 4*j, 4*k);
 				rb = new RigidBody(pos, mesh);
 				rb->useGravity = false;
 				objects.push_back(rb);
@@ -39,8 +39,8 @@ void PhysicsWorld::Update()
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		objects[i]->TranslateResolve(deltaTime);
-		objects[i]->AddForce(vec3(randomf(-0.25, 0.25), randomf(-0.25, 0.25), randomf(-0.25, 0.25)));
+  		objects[i]->TranslateResolve(deltaTime);
+		objects[i]->AddForce(vec3(randomf(-0.125, 0.125), randomf(-0.125, 0.125), randomf(-0.125, 0.125)));
 	}
 }
 

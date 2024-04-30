@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "PhysicsWorld.h"
 #include "Octant.h"
+#include "ComputeCollisionWorld.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ int g_winHeight = 800;
 
 char v_shader_file[] = ".\\shaders\\perVert_lambert.vert";
 char f_shader_file[] = ".\\shaders\\perVert_lambert.frag";
+char c_shader_file[] = ".\\shaders\\c_shader.comp";
 const char meshFile[128] = "./meshes/sphere.obj";
 
 PhysicsWorld* physicsWorld;
@@ -24,6 +26,7 @@ Camera g_cam;
 Mesh* sphere;
 vec3 g_lightPos = vec3(500.0f, 500.0f, 500.0f);
 Octant* octree;
+ComputeCollisionWorld colWorld;
 
 unsigned char g_keyStates[256];
 
@@ -33,7 +36,8 @@ void init()
 	sphere = new Mesh();
 	sphere->Create(meshFile, v_shader_file, f_shader_file);
 	physicsWorld = new PhysicsWorld(15, sphere);
-	octree = new Octant(physicsWorld, 3U, 25U);
+	octree = new Octant(physicsWorld, 3U, 50U);
+	colWorld.Create(physicsWorld->objects, c_shader_file);
 }
 
 void initialGL()
@@ -67,6 +71,7 @@ void idle()
 {
 	physicsWorld->Update();
 	octree->Update();
+	colWorld.Update();
 	glutPostRedisplay();
 }
 

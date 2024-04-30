@@ -1,0 +1,56 @@
+#version 430 compatibility
+
+struct Sphere {
+    vec4 position;
+    float radius;
+    uint octantIndex;
+};
+
+layout (std430, binding = 4) buffer Pos
+{
+	vec4 Positions [ ];
+};
+
+layout (std430, binding = 6) buffer Rad
+{
+	float Radii [ ];
+};
+
+layout (std430, binding = 8) buffer Oct
+{
+	uint OctantIDs [ ];
+};
+
+layout (std430, binding = 10) buffer RbC
+{
+	uint Collisions [ ];
+};
+
+layout (local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
+
+void main(){
+	uint g_id = gl_GlobalInvocationID.x;
+	
+	if (g_id >= Positions.length()) {
+        return;
+    }
+
+	vec4 pos = Positions[g_id];
+	float r = Radii[g_id];
+	uint oID = OctantIDs[g_id];
+
+	for(uint i = 0; i < Positions.length(); i++){
+		if(i == g_id || oID != OctantIDs[i]){
+			continue;
+		}
+
+		float d = length(Positions[i].xyz - pos.xyz);
+		float R = Radii[i] + r;
+
+		Collisions[g_id] = 0;
+
+		if(d < R){
+			Collisions[g_id] = i + 1;
+		}
+	}
+}
