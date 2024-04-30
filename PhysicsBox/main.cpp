@@ -32,7 +32,7 @@ void init()
 	g_cam.Set(38.0f, 13.0f, 4.0f, 0.0f, 0.0f, 0.0f, g_winWidth, g_winHeight, 45.0f, 0.01f, 10000.0f);
 	sphere = new Mesh();
 	sphere->Create(meshFile, v_shader_file, f_shader_file);
-	physicsWorld = new PhysicsWorld(10, sphere);
+	physicsWorld = new PhysicsWorld(15, sphere);
 	octree = new Octant(physicsWorld, 3U, 25U);
 }
 

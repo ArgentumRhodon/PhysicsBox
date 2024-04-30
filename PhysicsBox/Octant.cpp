@@ -30,13 +30,19 @@ Octant::Octant(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int i
 
 void Octant::Update()
 {
-	KillBranches();
+	if (physicsWorld->objects.empty())
+	{
+		// No objects to update, clear and return
+		KillBranches();
+		entityList.clear();
+		return;
+	}
 
-	RigidBody* firstObject = physicsWorld->objects[0];
-	min = firstObject->GetMinPos();
-	max = firstObject->GetMaxPos();
+	// Calculate the bounding box encompassing all objects
+	min = physicsWorld->objects[0]->GetMinPos();
+	max = physicsWorld->objects[0]->GetMaxPos();
 
-	for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
+	for (unsigned int i = 1; i < physicsWorld->objects.size(); i++)
 	{
 		vec3 entityMin = physicsWorld->objects[i]->GetMinPos();
 		vec3 entityMax = physicsWorld->objects[i]->GetMaxPos();
@@ -45,16 +51,18 @@ void Octant::Update()
 		max = glm::max(max, entityMax);
 	}
 
+	// Recalculate center and size of this octant
 	center = (max + min) / 2.0f;
-
 	vec3 extent = max - min;
 	size = glm::max(glm::max(extent.x, extent.y), extent.z);
 
+	// Adjust min and max to ensure correct size
 	vec3 halfSize = vec3(size) / 2.0f;
 	min = center - halfSize;
 	max = center + halfSize;
 
-	octantCount++;
+	// Reconstruct the tree based on updated parameters
+	octantCount = 1;
 	ConstructTree(maxLevel);
 }
 
@@ -118,39 +126,31 @@ void Octant::ClearEntityList(void)
 	entityList.clear();
 }
 
-void Octant::Subdivide(void)
+void Octant::Subdivide()
 {
-	// Return if at max level or already subdivided
-	if (level >= maxLevel) return;
+    // Return if already subdivided or at max level
+    if (numChildren > 0 || level >= maxLevel) {
+        return;
+    }
 
-	if (numChildren > 0)
-	{
-		return;
-	}
+    float halfSize = size / 2.0f;
+    vec3 quarterSize = vec3(halfSize) / 2.0f;
 
-	float quarterWidth = size / 4;
-	float halfWidth = size / 2;
+    for (unsigned int i = 0; i < 8; i++) {
+        vec3 childCenter = center;
+        childCenter.x += (i & 1) ? quarterSize.x : -quarterSize.x;
+        childCenter.y += (i & 2) ? quarterSize.y : -quarterSize.y;
+        childCenter.z += (i & 4) ? quarterSize.z : -quarterSize.z;
 
-	child[0] = new Octant(center + vec3(quarterWidth), halfWidth, root);
-	child[1] = new Octant(center + vec3(-quarterWidth, quarterWidth, quarterWidth), halfWidth, root);
-	child[2] = new Octant(center + vec3(quarterWidth, -quarterWidth, quarterWidth), halfWidth, root);
-	child[3] = new Octant(center + vec3(quarterWidth, quarterWidth, -quarterWidth), halfWidth, root);
-	child[4] = new Octant(center + vec3(-quarterWidth, -quarterWidth, quarterWidth), halfWidth, root);
-	child[5] = new Octant(center + vec3(-quarterWidth, quarterWidth, -quarterWidth), halfWidth, root);
-	child[6] = new Octant(center + vec3(quarterWidth, -quarterWidth, -quarterWidth), halfWidth, root);
-	child[7] = new Octant(center + vec3(-quarterWidth), halfWidth, root);
+        child[i] = new Octant(childCenter, halfSize, root);
+        child[i]->level = level + 1;
 
-	numChildren = 8;
+        if (child[i]->ContainsAtLeast(idealEntityCount)) {
+            child[i]->Subdivide();
+        }
+    }
 
-	for (unsigned int i = 0; i < 8; i++)
-	{
-		child[i]->level = level + 1;
-
-		if (child[i]->ContainsAtLeast(idealEntityCount))
-		{
-			child[i]->Subdivide();
-		}
-	}
+    numChildren = 8;
 }
 
 Octant* Octant::GetChild(unsigned int childIndex)
