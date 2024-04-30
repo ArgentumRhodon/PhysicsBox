@@ -30,9 +30,9 @@ class Octant
 
 public:
 	// USED FOR ROOT ONLY
-	Octant();
+	Octant(PhysicsWorld* physicsWorld, unsigned int maxLevel = 2, unsigned int idealEntityCount = 5);
 
-	void Set(PhysicsWorld* physicsWorld, unsigned int maxLevel = 2, unsigned int idealEntityCount = 5);
+	void Update();
 
 	~Octant(void);
 
@@ -67,14 +67,12 @@ public:
 
 	unsigned int GetOctantCount(void);
 
-	void Display(unsigned int id, vec3 color);
-
-	void Display(vec3 color);
+	void Display(Camera g_cam);
 
 	void DisplayLeaves(Camera g_cam);
 
 private:
-	Octant(vec3 center, float size);
+	Octant(vec3 center, float size, Octant* root);
 
 	// Big Three
 	//Octant(Octant const& other);

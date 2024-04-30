@@ -23,7 +23,7 @@ PhysicsWorld* physicsWorld;
 Camera g_cam;
 Mesh* sphere;
 vec3 g_lightPos = vec3(500.0f, 500.0f, 500.0f);
-Octant octree;
+Octant* octree;
 
 unsigned char g_keyStates[256];
 
@@ -33,7 +33,7 @@ void init()
 	sphere = new Mesh();
 	sphere->Create(meshFile, v_shader_file, f_shader_file);
 	physicsWorld = new PhysicsWorld(10, sphere);
-	octree.Set(physicsWorld, 2U, 5U);
+	octree = new Octant(physicsWorld, 3U, 25U);
 }
 
 void initialGL()
@@ -58,7 +58,7 @@ void display()
 	g_cam.DrawGrid();
 
 	physicsWorld->Draw(g_cam, g_lightPos);
-	octree.DisplayLeaves(g_cam);
+	octree->DisplayLeaves(g_cam);
 
 	glutSwapBuffers();
 }
@@ -66,7 +66,7 @@ void display()
 void idle()
 {
 	physicsWorld->Update();
-	octree.Set(physicsWorld);
+	octree->Update();
 	glutPostRedisplay();
 }
 

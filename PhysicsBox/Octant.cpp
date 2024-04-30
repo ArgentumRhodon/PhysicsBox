@@ -13,12 +13,7 @@ unsigned int Octant::idealEntityCount = 5;
 PhysicsWorld* Octant::physicsWorld = nullptr;
 using namespace std;
 
-Octant::Octant()
-{
-	Init();
-}
-
-void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int idealEntityCount)
+Octant::Octant(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int idealEntityCount)
 {
 	Init();
 	this->physicsWorld = physicsWorld;
@@ -29,6 +24,13 @@ void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int
 
 	root = this;
 	usedChildNodes.clear();
+
+	Update();
+}
+
+void Octant::Update()
+{
+	KillBranches();
 
 	RigidBody* firstObject = physicsWorld->objects[0];
 	min = firstObject->GetMinPos();
@@ -41,15 +43,6 @@ void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int
 
 		min = glm::min(min, entityMin);
 		max = glm::max(max, entityMax);
-
-		/*if (max.x < entityMax.x) max.x = entityMax.x;
-		if (min.x > entityMin.x) min.x = entityMin.x;
-
-		if (max.y < entityMax.y) max.y = entityMax.y;
-		if (min.y > entityMin.y) min.y = entityMin.y;
-
-		if (max.z < entityMax.z) max.z = entityMax.z;
-		if (min.z > entityMin.z) min.z = entityMin.z;*/
 	}
 
 	center = (max + min) / 2.0f;
@@ -138,14 +131,14 @@ void Octant::Subdivide(void)
 	float quarterWidth = size / 4;
 	float halfWidth = size / 2;
 
-	child[0] = new Octant(center + vec3(quarterWidth), halfWidth);
-	child[1] = new Octant(center + vec3(-quarterWidth, quarterWidth, quarterWidth), halfWidth);
-	child[2] = new Octant(center + vec3(quarterWidth, -quarterWidth, quarterWidth), halfWidth);
-	child[3] = new Octant(center + vec3(quarterWidth, quarterWidth, -quarterWidth), halfWidth);
-	child[4] = new Octant(center + vec3(-quarterWidth, -quarterWidth, quarterWidth), halfWidth);
-	child[5] = new Octant(center + vec3(-quarterWidth, quarterWidth, -quarterWidth), halfWidth);
-	child[6] = new Octant(center + vec3(quarterWidth, -quarterWidth, -quarterWidth), halfWidth);
-	child[7] = new Octant(center + vec3(-quarterWidth), halfWidth);
+	child[0] = new Octant(center + vec3(quarterWidth), halfWidth, root);
+	child[1] = new Octant(center + vec3(-quarterWidth, quarterWidth, quarterWidth), halfWidth, root);
+	child[2] = new Octant(center + vec3(quarterWidth, -quarterWidth, quarterWidth), halfWidth, root);
+	child[3] = new Octant(center + vec3(quarterWidth, quarterWidth, -quarterWidth), halfWidth, root);
+	child[4] = new Octant(center + vec3(-quarterWidth, -quarterWidth, quarterWidth), halfWidth, root);
+	child[5] = new Octant(center + vec3(-quarterWidth, quarterWidth, -quarterWidth), halfWidth, root);
+	child[6] = new Octant(center + vec3(quarterWidth, -quarterWidth, -quarterWidth), halfWidth, root);
+	child[7] = new Octant(center + vec3(-quarterWidth), halfWidth, root);
 
 	numChildren = 8;
 
@@ -245,6 +238,7 @@ void Octant::AssignIDToEntity(void)
 			if (IsColliding(i))
 			{
 				physicsWorld->objects[i]->octantID = id;
+				entityList.push_back(i);
 			}
 		}
 	}
@@ -255,46 +249,40 @@ unsigned int Octant::GetOctantCount(void)
 	return octantCount;
 }
 
-Octant::Octant(vec3 center, float size)
-	: center(center), size(size)
+Octant::Octant(vec3 center, float size, Octant* root)
 {
 	Init();
+	this->center = center;
+	this->size = size;
 	min = center - (vec3(size) / 2.0f);
 	max = center + (vec3(size) / 2.0f);
+
+	this->root = root;
 
 	octantCount++;
 }
 
-void Octant::DisplayLeaves(Camera g_cam)
+void Octant::Display(Camera g_cam)
 {
-	unsigned int nLeaves = usedChildNodes.size();
-	for (unsigned int nChild = 0; nChild < nLeaves; nChild)
-	{
-		child[nChild]->DisplayLeaves(g_cam);
-	}
-
 	glUseProgram(0);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, center)));
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 0.6f, 0.6f);
 	glutWireCube(size);
 	glPopMatrix();
+}
 
-	// Debug
-	glPushMatrix();
-	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, max)));
-	glColor3f(1.0f, 0.0f, 1.0f);
-	glutWireSphere(0.05, 10, 10);
-	glPopMatrix();
-
-	glPushMatrix();
-	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, min)));
-	glColor3f(1.0f, 0.0f, 1.0f);
-	glutWireSphere(0.05, 10, 10);
-	glPopMatrix();
+void Octant::DisplayLeaves(Camera g_cam)
+{
+	unsigned int nLeaves = usedChildNodes.size();
+	root->Display(g_cam);
+	for (unsigned int nChild = 0; nChild < nLeaves; nChild++)
+	{
+		root->usedChildNodes[nChild]->Display(g_cam);
+	}
 }
 
 // Big Three

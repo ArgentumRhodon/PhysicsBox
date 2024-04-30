@@ -25,10 +25,6 @@ PhysicsWorld::PhysicsWorld(unsigned int numObjects, Mesh* mesh)
 			}
 		}
 	}
-	vec3 pos = vec3(100, 100, -100);
-	rb = new RigidBody(pos, mesh);
-	rb->useGravity = false;
-	objects.push_back(rb);
 }
 
 PhysicsWorld::~PhysicsWorld()
@@ -52,7 +48,7 @@ void PhysicsWorld::Draw(Camera g_cam, vec3 g_lightPos)
 {
 	for (int i = 0; i < objects.size(); i++)
 	{
-		// objects[i]->mesh->Draw(translate(g_cam.viewMat, objects[i]->position), g_cam.projMat, g_lightPos);
-		objects[i]->DisplayBoundingSphere(g_cam);
+		objects[i]->mesh->Draw(translate(g_cam.viewMat, objects[i]->position), g_cam.projMat, g_lightPos);
+		// objects[i]->DisplayBoundingSphere(g_cam);
 	}
 }
