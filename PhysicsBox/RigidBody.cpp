@@ -1,3 +1,10 @@
+#include <GL/glew.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h> // include glut for Mac
+#else
+#include <GL/freeglut.h> //include glut for Windows
+#endif
+
 #include "RigidBody.h"
 
 RigidBody::RigidBody(vec3 position, Mesh* mesh, float mass, float drag, float radius)
@@ -39,4 +46,17 @@ vec3 RigidBody::GetMinPos()
 vec3 RigidBody::GetMaxPos()
 {
 	return position + vec3(radius);
+}
+
+void RigidBody::DisplayBoundingSphere(Camera g_cam)
+{
+	glUseProgram(0);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, position)));
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glutWireSphere(radius, 10, 10);
+	glPopMatrix();
 }

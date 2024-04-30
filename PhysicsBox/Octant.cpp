@@ -1,14 +1,27 @@
+#include <GL/glew.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h> // include glut for Mac
+#else
+#include <GL/freeglut.h> //include glut for Windows
+#endif
+
 #include "Octant.h"
 
 unsigned int Octant::octantCount = 0;
 unsigned int Octant::maxLevel = 3;
 unsigned int Octant::idealEntityCount = 5;
-
+PhysicsWorld* Octant::physicsWorld = nullptr;
 using namespace std;
 
-Octant::Octant(unsigned int maxLevel, unsigned int idealEntityCount)
+Octant::Octant()
 {
 	Init();
+}
+
+void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int idealEntityCount)
+{
+	Init();
+	this->physicsWorld = physicsWorld;
 	octantCount = 0;
 	this->maxLevel = maxLevel;
 	this->idealEntityCount = idealEntityCount;
@@ -42,12 +55,13 @@ Octant::Octant(unsigned int maxLevel, unsigned int idealEntityCount)
 		if (abs(min[i]) > longestSideLength) longestSideLength = abs(min[i]);
 		if (abs(max[i]) > longestSideLength) longestSideLength = abs(max[i]);
 	}
-	
-	min = vec3(-longestSideLength);
-	max = vec3(longestSideLength);
+
+	center = (max + min) / 2.0f;
+
+	min = center - vec3(longestSideLength / 2);
+	max = center + vec3(longestSideLength / 2);
 
 	size = (max - min).x;
-	center = (max + min) / 2.0f;
 
 	octantCount++;
 	ConstructTree(maxLevel);
@@ -167,7 +181,7 @@ bool Octant::IsLeaf(void)
 bool Octant::ContainsAtLeast(unsigned int numEntities)
 {
 	// If this isn't a lead node, return false
-	if (numChildren > 0) return;
+	if (numChildren > 0) return false;
 
 	unsigned int numEntitiesContained = 0;
 	for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
@@ -251,6 +265,25 @@ Octant::Octant(vec3 center, float size)
 	max = center + (vec3(size) / 2.0f);
 
 	octantCount++;
+}
+
+void Octant::DisplayLeaves(Camera g_cam)
+{
+	unsigned int nLeaves = usedChildNodes.size();
+	for (unsigned int nChild = 0; nChild < nLeaves; nChild)
+	{
+		child[nChild]->DisplayLeaves(g_cam);
+	}
+
+	glUseProgram(0);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(value_ptr(translate(g_cam.viewMat, center)));
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glutWireCube(size);
+	glPopMatrix();
 }
 
 // Big Three

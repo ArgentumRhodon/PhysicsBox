@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "PhysicsWorld.h"
+#include "Octant.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ PhysicsWorld* physicsWorld;
 Camera g_cam;
 Mesh* sphere;
 vec3 g_lightPos = vec3(500.0f, 500.0f, 500.0f);
+Octant octree;
 
 unsigned char g_keyStates[256];
 
@@ -30,7 +32,8 @@ void init()
 	g_cam.Set(38.0f, 13.0f, 4.0f, 0.0f, 0.0f, 0.0f, g_winWidth, g_winHeight, 45.0f, 0.01f, 10000.0f);
 	sphere = new Mesh();
 	sphere->Create(meshFile, v_shader_file, f_shader_file);
-	physicsWorld = new PhysicsWorld(25, sphere);
+	physicsWorld = new PhysicsWorld(15, sphere);
+	octree.Set(physicsWorld, 2U, 5U);
 }
 
 void initialGL()
@@ -54,15 +57,16 @@ void display()
 
 	g_cam.DrawGrid();
 
-	//sphere->Draw(g_cam.viewMat, g_cam.projMat, g_lightPos);
 	physicsWorld->Draw(g_cam, g_lightPos);
+	octree.DisplayLeaves(g_cam);
 
 	glutSwapBuffers();
 }
 
 void idle()
 {
-	physicsWorld->Update();
+	/*physicsWorld->Update();
+	octree.Set(physicsWorld);*/
 	glutPostRedisplay();
 }
 

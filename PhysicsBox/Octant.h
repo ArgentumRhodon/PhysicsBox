@@ -13,7 +13,7 @@ class Octant
 
 	float size = 0.0f;
 
-	PhysicsWorld* physicsWorld = nullptr;
+	static PhysicsWorld* physicsWorld;
 
 	vec3 center = vec3(0.0f);
 	vec3 min = vec3(0.0f);
@@ -29,7 +29,9 @@ class Octant
 
 public:
 	// USED FOR ROOT ONLY
-	Octant(unsigned int maxLevel = 2, unsigned int idealEntityCount = 5);
+	Octant();
+
+	void Set(PhysicsWorld* physicsWorld, unsigned int maxLevel = 2, unsigned int idealEntityCount = 5);
 
 	~Octant(void);
 
@@ -63,6 +65,12 @@ public:
 	void AssignIDToEntity(void);
 
 	unsigned int GetOctantCount(void);
+
+	void Display(unsigned int id, vec3 color);
+
+	void Display(vec3 color);
+
+	void DisplayLeaves(Camera g_cam);
 
 private:
 	Octant(vec3 center, float size);

@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Mesh.h"
+#include "Camera.h"
 
 using namespace glm;
 using namespace std;
@@ -27,5 +28,6 @@ public:
 	void AddForce(vec3 torque);
 	vec3 GetMinPos();
 	vec3 GetMaxPos();
+	void DisplayBoundingSphere(Camera g_cam);
 };
 
