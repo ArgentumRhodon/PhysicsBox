@@ -34,20 +34,20 @@ void Octant::Set(PhysicsWorld* physicsWorld, unsigned int maxLevel, unsigned int
 	min = firstObject->GetMinPos();
 	max = firstObject->GetMaxPos();
 
-	for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
+	/*for (unsigned int i = 0; i < physicsWorld->objects.size(); i++)
 	{
 		vec3 entityMin = physicsWorld->objects[i]->GetMinPos();
 		vec3 entityMax = physicsWorld->objects[i]->GetMaxPos();
 
 		if (max.x < entityMax.x) max.x = entityMax.x;
-		else if (min.x > entityMin.x) min.x = entityMin.x;
+		if (min.x > entityMin.x) min.x = entityMin.x;
 
 		if (max.y < entityMax.y) max.y = entityMax.y;
-		else if (min.y > entityMin.y) min.y = entityMin.y;
+		if (min.y > entityMin.y) min.y = entityMin.y;
 
 		if (max.z < entityMax.z) max.z = entityMax.z;
-		else if (min.z > entityMin.z) min.z = entityMin.z;
-	}
+		if (min.z > entityMin.z) min.z = entityMin.z;
+	}*/
 
 	float longestSideLength = 0;
 	for (int i = 0; i < 3; i++)
